@@ -1,14 +1,16 @@
 import pygame
 
+from mixins import YSortCameraGroup
 from models import Player, Tile
 from settings import *
 
 
 class Level:
     def __init__(self):
+        self.player = None
         self.display_surface = pygame.display.get_surface()
         self.obstacles_sprites = pygame.sprite.Group()
-        self.visible_sprites = pygame.sprite.Group()
+        self.visible_sprites = YSortCameraGroup()
         self.tile = Tile
         self.create_map()
 
@@ -25,8 +27,8 @@ class Level:
                     Tile(pos=(x, y), groups=(self.visible_sprites, self.obstacles_sprites))
 
                 if column == 'p':
-                    Player(pos=(x, y), groups=(self.visible_sprites,), obstacle_sprites=self.obstacles_sprites)
+                    self.player = Player(pos=(x, y), groups=(self.visible_sprites,), obstacle_sprites=self.obstacles_sprites)
 
     def run(self):
-        self.visible_sprites.draw(self.display_surface)
+        self.visible_sprites.custom_draw(self.player)
         self.visible_sprites.update()
